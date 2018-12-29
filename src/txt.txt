@@ -1,0 +1,133 @@
+import React, {Component} from "react";
+import {action, observable, decorate} from "mobx";
+import {observer} from "mobx-react";
+import math from 'mathjs'
+import Resultarea from "./resultarea";
+import Allbutton from "./allbuttons";
+import Button from "./tbuttons";
+
+
+
+const appState = observable({
+  count: []
+});
+
+appState.increment = function(value) {
+
+  this.count = value
+
+}
+
+/* 
+appState.decrement = function() {
+  this.count--;
+}
+
+handleInc = () => {
+  appState.increment()
+}
+
+handleDec = () => {
+  appState.decrement()
+}
+*/
+
+const Home = observer(
+class Home extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      operations: [],
+    };
+  }
+  
+
+  calculateOperations = () => {
+    let result = appState.count.join('')
+   // let result = this.state.operations.join('')
+    console.log(result);
+
+    if (result) {
+      result = math.eval(result)
+      this.setState({
+        operations: [result],
+      })
+    }else {
+      this.setState({
+        operations: ['0'],
+      })    
+    }
+  }
+
+  Button_click = e => {
+
+    const value = e.target.getAttribute('data-value')
+    console.log(value);
+    switch (value) {
+      case 'clear':
+        this.setState({
+          operations: [],
+        })
+        break
+      case 'equal':
+        this.calculateOperations()
+        break
+      default:
+      const operations_array = this.state.operations;
+      operations_array.push(value)
+      let operations_single = operations_array.map((num) => num);
+      this.setState({operations: operations_single});
+
+
+
+
+        // mobx
+      appState.count.push(value)
+      const aoperations_single = appState.count.map((num) => num);
+      appState.increment(aoperations_single)
+
+        break
+    }
+
+  }
+
+  render() {
+    
+          return (
+              <div className="wraper">
+                <div className="taslim-calculator">
+                {appState.count}
+                  <Resultarea data={this.state.operations} />
+                  <Allbutton>
+                    <Button onClick={this.Button_click} label="C" value="clear" />
+                    <Button onClick={this.Button_click} label="7" value="7" />
+                    <Button onClick={this.Button_click} label="4" value="4" />
+                    <Button onClick={this.Button_click} label="1" value="1" />
+                    <Button onClick={this.Button_click} label="0" value="0" />
+
+                    <Button label="" value="null" />
+                    <Button onClick={this.Button_click} label="8" value="8" />
+                    <Button onClick={this.Button_click} label="5" value="5" />
+                    <Button onClick={this.Button_click} label="2" value="2" />
+                    <Button onClick={this.Button_click} label="." value="." />
+
+                    <Button label="" value="null" />
+                    <Button onClick={this.Button_click} label="9" value="9" />
+                    <Button onClick={this.Button_click} label="6" value="6" />
+                    <Button onClick={this.Button_click} label="3" value="3" />
+                    <Button label="" value="null" />
+
+                    <Button onClick={this.Button_click} label="/" value="/" />
+                    <Button onClick={this.Button_click} label="x" value="*" />
+                    <Button onClick={this.Button_click} label="-" value="-" />
+                    <Button onClick={this.Button_click} label="+" value="+" />
+                    <Button onClick={this.Button_click} label="=" value="equal" />
+
+                  </Allbutton>
+                </div>
+              </div>
+          )
+      }
+  }
+);
+export default Home;
